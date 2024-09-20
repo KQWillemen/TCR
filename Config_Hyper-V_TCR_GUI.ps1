@@ -1,89 +1,70 @@
-#Load Windows Forms assembly
+#Load Windows Forms and drawing
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 
-#Create a new form
+#Function to check if Hyper-V is enabled
+function Get-HyperVStatus {
+    $feature = Get-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V-All
+    if ($feature.State -eq "Enabled") {
+        return "Enabled"
+    } else {
+        return "Disabled"
+    }
+}
+
+#Function to get the Windows version
+function Get-WindowsVersion {
+    $WinVer = (Get-computerInfo).OSname
+    return $WinVer
+}
+
+#Create the form
 $form = New-Object System.Windows.Forms.Form
-$form.Text = "Basic Installer"
-$form.Size = New-Object System.Drawing.Size(400, 300)
+$form.Text = "Config Hyper-V"
+$form.Size = New-Object System.Drawing.Size(400, 200)
 $form.StartPosition = "CenterScreen"
 
-#Add a label for the installation path
-$label = New-Object System.Windows.Forms.Label
-$label.Text = "Installation Path:"
-$label.Location = New-Object System.Drawing.Point(20, 20)
-$label.Size = New-Object System.Drawing.Size(100, 20)
-$form.Controls.Add($label)
+#label for Windows version
+$WinVerLabel = New-Object System.Windows.Forms.Label
+$WinVerLabel.Text = "OS Version:"
+$WinVerLabel.Location = New-Object System.Drawing.Point(20, 20)
+$WinVerLabel.Size = New-Object System.Drawing.Size(120, 20)
+$form.Controls.Add($WinVerLabel)
 
-#Add a text box for the installation path input
-$textBox = New-Object System.Windows.Forms.TextBox
-$textBox.Location = New-Object System.Drawing.Point(130, 20)
-$textBox.Size = New-Object System.Drawing.Size(200, 20)
-$form.Controls.Add($textBox)
+#text box to display Windows version
+$WinVerTextBox = New-Object System.Windows.Forms.TextBox
+$WinVerTextBox.Location = New-Object System.Drawing.Point(150, 20)
+$WinVerTextBox.Size = New-Object System.Drawing.Size(200, 20)
+$WinVerTextBox.ReadOnly = $true
+$WinVerTextBox.Text = Get-WindowsVersion
+$form.Controls.Add($WinVerTextBox)
 
-#Add a button to browse for installation path
-$browseButton = New-Object System.Windows.Forms.Button
-$browseButton.Text = "Browse"
-$browseButton.Location = New-Object System.Drawing.Point(340, 18)
-$browseButton.Size = New-Object System.Drawing.Size(50, 24)
-$form.Controls.Add($browseButton)
+#label for Hyper-V status
+$hypervLabel = New-Object System.Windows.Forms.Label
+$hypervLabel.Text = "Hyper-V Status:"
+$hypervLabel.Location = New-Object System.Drawing.Point(20, 60)
+$hypervLabel.Size = New-Object System.Drawing.Size(120, 20)
+$form.Controls.Add($hypervLabel)
 
-#Browse button click event
-$browseButton.Add_Click({
-    $folderBrowser = New-Object System.Windows.Forms.FolderBrowserDialog
-    if ($folderBrowser.ShowDialog() -eq [System.Windows.Forms.DialogResult]::OK) {
-        $textBox.Text = $folderBrowser.SelectedPath
-    }
-})
+#text box for Hyper-V status
+$hypervTextBox = New-Object System.Windows.Forms.TextBox
+$hypervTextBox.Location = New-Object System.Drawing.Point(150, 60)
+$hypervTextBox.Size = New-Object System.Drawing.Size(200, 20)
+$hypervTextBox.ReadOnly = $true
+$hypervTextBox.Text = Get-HyperVStatus
+$form.Controls.Add($hypervTextBox)
 
-#Add a label for the installation status
-$statusLabel = New-Object System.Windows.Forms.Label
-$statusLabel.Text = "Status:"
-$statusLabel.Location = New-Object System.Drawing.Point(20, 60)
-$statusLabel.Size = New-Object System.Drawing.Size(100, 20)
-$form.Controls.Add($statusLabel)
+#exit button
+$exitButton = New-Object System.Windows.Forms.Button
+$exitButton.Text = "Exit"
+$exitButton.Location = New-Object System.Drawing.Point(150, 100)
+$exitButton.Size = New-Object System.Drawing.Size(75, 30)
+$form.Controls.Add($exitButton)
 
-#Add a progress bar
-$progressBar = New-Object System.Windows.Forms.ProgressBar
-$progressBar.Location = New-Object System.Drawing.Point(130, 60)
-$progressBar.Size = New-Object System.Drawing.Size(200, 20)
-$progressBar.Style = 'Continuous'
-$progressBar.Value = 0
-$form.Controls.Add($progressBar)
-
-#Add an Install button
-$installButton = New-Object System.Windows.Forms.Button
-$installButton.Text = "Install"
-$installButton.Location = New-Object System.Drawing.Point(130, 100)
-$installButton.Size = New-Object System.Drawing.Size(75, 30)
-$form.Controls.Add($installButton)
-
-#Install button click event
-$installButton.Add_Click({
-    $progressBar.Value = 0
-    $statusLabel.Text = "Installing..."
-    
-    #Simulate installation with a loop
-    for ($i = 1; $i -le 100; $i += 10) {
-        Start-Sleep -Milliseconds 200
-        $progressBar.Value = $i
-    }
-
-    $statusLabel.Text = "Installation Complete!"
-    [System.Windows.Forms.MessageBox]::Show("Installation Complete!", "Installation", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Information)
-})
-
-#Add a Cancel button
-$cancelButton = New-Object System.Windows.Forms.Button
-$cancelButton.Text = "Cancel"
-$cancelButton.Location = New-Object System.Drawing.Point(230, 100)
-$cancelButton.Size = New-Object System.Drawing.Size(75, 30)
-$form.Controls.Add($cancelButton)
-
-#Cancel button click event
-$cancelButton.Add_Click({
+#exit button event
+$exitButton.Add_Click({
     $form.Close()
 })
 
-#Show the form
+# Show the form
 $form.ShowDialog()
