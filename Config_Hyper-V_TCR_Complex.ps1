@@ -10,7 +10,6 @@ if((Get-WindowsOptionalFeature -online -FeatureName Microsoft-Hyper-V-All).lengt
     Write-Host "upgrade os to"
 }
 
-
 <#
  # {# Check if Hyper-V is enabled
 $hyperv = Get-WindowsOptionalFeature -FeatureName Microsoft-Hyper-V-All -Online 
