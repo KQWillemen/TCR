@@ -74,7 +74,7 @@ function Start-Restart{
 
     #Register the task
     $taskDescription = "Restart HyperVConfig once after system reboot"
-    $action = New-ScheduledTaskAction -Execute $exePath
+    $action = New-ScheduledTaskAction -Execute $exePath -Argument "Restart"
     $trigger = New-ScheduledTaskTrigger -AtLogon
     $settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries
     Register-ScheduledTask -Action $action -Trigger $trigger -TaskName $taskName -Description $taskDescription -User $env:USERNAME -RunLevel Highest -Settings $settings
@@ -90,6 +90,11 @@ function set-HyperV {
     $hypervTextBox.Visible = $false
     $progressBar.Visible = $true
     
+    if ($($args[0]) -eq "Restart"){
+        $hypervLabel.Text = "Please Wait:"
+        $hypervTextBox.Visible = $true
+        $hypervTextBox.Text = "Windows is initializing Hyper-V"
+    }
 
     #Lol not needed, but people like to see it :)
     for ($i = 1; $i -le 80; $i += 10) {
