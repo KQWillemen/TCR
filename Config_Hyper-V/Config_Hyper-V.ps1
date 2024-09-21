@@ -103,6 +103,8 @@ function set-HyperV {
     if ($service.Status -eq 'Running') {
         Restart-Service -Name $serviceName -Force
         start-sleep -Seconds 10
+    }elseif (service.Status -eq 'Stopped'){
+        Start-Service -Name $serviceName -Force
     }
 
     #Test if folders exist otherwise Create folders
