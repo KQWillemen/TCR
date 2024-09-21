@@ -75,7 +75,7 @@ function Start-Restart{
     #Register the task
     $taskDescription = "Restart HyperVConfig once after system reboot"
     $action = New-ScheduledTaskAction -Execute $exePath
-    $trigger = New-ScheduledTaskTrigger -AtStartup
+    $trigger = New-ScheduledTaskTrigger -AtLogon
     $settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries
     Register-ScheduledTask -Action $action -Trigger $trigger -TaskName $taskName -Description $taskDescription -User $env:USERNAME -RunLevel Highest -Settings $settings
 
@@ -144,6 +144,7 @@ $form = New-Object System.Windows.Forms.Form
 $form.Text = "Config Hyper-V"
 $form.Size = New-Object System.Drawing.Size(400, 200)
 $form.StartPosition = "CenterScreen"
+$form.TopMost = $true
 
 #create Icon
 $base64Icon = "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"
