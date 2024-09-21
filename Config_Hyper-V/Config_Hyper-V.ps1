@@ -12,14 +12,6 @@ if ($taskExists) {
     Unregister-ScheduledTask -TaskName $taskName -Confirm:$false
 }
 
-#Check vmms service and Restart service
-$serviceName = "vmms"
-$service = Get-Service -Name $serviceName -ErrorAction SilentlyContinue
-
-if ($service.Status -eq 'Running') {
-    Restart-Service -Name $serviceName -Force
-}
-
 #Function to check if Hyper-V is enabled
 function Get-HyperVStatus {
     $feature = Get-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V-All
@@ -103,6 +95,14 @@ function set-HyperV {
     for ($i = 1; $i -le 80; $i += 10) {
         Start-Sleep -Milliseconds 200
         $progressBar.Value = $i
+    }
+    #Check vmms service and Restart service
+    $serviceName = "vmms"
+    $service = Get-Service -Name $serviceName -ErrorAction SilentlyContinue
+
+    if ($service.Status -eq 'Running') {
+        Restart-Service -Name $serviceName -Force
+        start-sleep -Seconds 10
     }
 
     #Test if folders exist otherwise Create folders
