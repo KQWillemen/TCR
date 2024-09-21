@@ -96,17 +96,7 @@ function set-HyperV {
         Start-Sleep -Milliseconds 200
         $progressBar.Value = $i
     }
-    #Check vmms service and Restart service
-    $serviceName = "vmms"
-    $service = Get-Service -Name $serviceName -ErrorAction SilentlyContinue
-
-    if ($service.Status -eq 'Running') {
-        Restart-Service -Name $serviceName -Force
-        start-sleep -Seconds 10
-    }elseif (service.Status -eq 'Stopped'){
-        Start-Service -Name $serviceName -Force
-    }
-
+    
     #Test if folders exist otherwise Create folders
     If (-not (Test-Path -Path "$env:SystemDrive\hv")){
         New-Item -Name HV -Path $env:SystemDrive -ItemType Directory
