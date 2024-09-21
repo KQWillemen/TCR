@@ -1,0 +1,1 @@
+[Convert]::ToBase64String([IO.File]::ReadAllBytes("C:\HP\7.ico")) | Set-Clipboard
