@@ -102,6 +102,7 @@ function set-HyperV {
             if ($service.Status -eq 'Running') {
                 $hypervTextBox.Visible = $false
                 $progressBar.Visible = $true
+                break
             } else {
                 $hypervTextBox.text = "Waiting for $serviceName to start..."
             }
@@ -109,6 +110,7 @@ function set-HyperV {
             $hypervTextBox.text = "$serviceName not found, please restart"
             $exitButton.Visible = $true
             $RestartButton.Visible = $true
+            break
         }
 
         Start-Sleep -Seconds $interval
