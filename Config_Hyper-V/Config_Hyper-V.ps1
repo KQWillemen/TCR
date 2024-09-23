@@ -87,8 +87,7 @@ function set-HyperV {
     $exitButton.Visible = $false
     $ConfigButton.Visible = $false
     $hypervLabel.Text = "Progress:"
-    $hypervTextBox.Visible = $false
-    $progressBar.Visible = $true
+    
     
     #Check if nvagent service is running, otherwise it is not possible to create the switches.
     $serviceName = 'nvagent'
@@ -101,13 +100,15 @@ function set-HyperV {
         $service = Get-Service -Name $serviceName -ErrorAction SilentlyContinue
         if ($service) {
             if ($service.Status -eq 'Running') {
-                break
+                $hypervTextBox.Visible = $false
+                $progressBar.Visible = $true
             } else {
-                #Message Hyper-v box :"Waiting for $serviceName to start..."
+                $hypervTextBox.text = "Waiting for $serviceName to start..."
             }
         }else {
-            #Error Message in Hyper-V box!
-            break
+            $hypervTextBox.text = "$serviceName not found, please restart"
+            $exitButton.Visible = $true
+            $RestartButton.Visible = $true
         }
 
         Start-Sleep -Seconds $interval
@@ -115,7 +116,10 @@ function set-HyperV {
     }
 
     if ($elapsedTime -ge $timeout) {
-       #Create retry button! Timeout: $serviceName did not start within 15 minutes.
+        $hypervTextBox.text = "$serviceName did not start within 15 minutes."
+        $exitButton.Visible = $true
+        $ConfigButton.text = "Retry"
+        $ConfigButton.Visible = $true  
     }
     
     #Lol not needed, but people like to see it :) 
