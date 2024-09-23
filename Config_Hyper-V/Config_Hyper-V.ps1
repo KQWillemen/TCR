@@ -90,13 +90,35 @@ function set-HyperV {
     $hypervTextBox.Visible = $false
     $progressBar.Visible = $true
     
-    if ($($args[0]) -eq "Restart"){
-        $hypervLabel.Text = "Please Wait:"
-        $hypervTextBox.Visible = $true
-        $hypervTextBox.Text = "Windows is initializing Hyper-V"
+    #Check if nvagent service is running, otherwise it is not possible to create the switches.
+    $serviceName = 'nvagent'
+    $timeout = 900   #in seconds
+    $interval = 10
+    $elapsedTime = 0
+
+    #Checking service status until it is running or timeout
+    while ($elapsedTime -lt $timeout) {
+        $service = Get-Service -Name $serviceName -ErrorAction SilentlyContinue
+        if ($service) {
+            if ($service.Status -eq 'Running') {
+                break
+            } else {
+                #Message Hyper-v box :"Waiting for $serviceName to start..."
+            }
+        }else {
+            #Error Message in Hyper-V box!
+            break
+        }
+
+        Start-Sleep -Seconds $interval
+        $elapsedTime += $interval
     }
 
-    #Lol not needed, but people like to see it :)
+    if ($elapsedTime -ge $timeout) {
+       #Create retry button! Timeout: $serviceName did not start within 15 minutes.
+    }
+    
+    #Lol not needed, but people like to see it :) 
     for ($i = 1; $i -le 80; $i += 10) {
         Start-Sleep -Milliseconds 200
         $progressBar.Value = $i
